@@ -20,16 +20,23 @@ public class CatalogueConfigFactory
         Map<String, BiFunction<Screen, ModContainer, Screen>> providers = new HashMap<>();
         FabricLoader.getInstance().getEntrypointContainers("modmenu", ModMenuApi.class).forEach(container ->
         {
-            ModMenuApi entry = container.getEntrypoint();
             String modId = container.getProvider().getMetadata().getId();
-            providers.put(modId, (previousScreen, modContainer) -> {
-                return entry.getModConfigScreenFactory().create(previousScreen);
-            });
-            entry.getProvidedConfigScreenFactories().forEach((s, factory) -> {
-                providers.putIfAbsent(s, (previousScreen, modContainer) -> {
-                    return factory.create(previousScreen);
+            try
+            {
+                ModMenuApi entry = container.getEntrypoint();
+                providers.put(modId, (previousScreen, modContainer) -> {
+                    return entry.getModConfigScreenFactory().create(previousScreen);
                 });
-            });
+                entry.getProvidedConfigScreenFactories().forEach((s, factory) -> {
+                    providers.putIfAbsent(s, (previousScreen, modContainer) -> {
+                        return factory.create(previousScreen);
+                    });
+                });
+            }
+            catch(Exception e)
+            {
+                Menulogue.LOGGER.error("Failed to load ModMenuApi entrypoint for {}", modId, e);
+            }
         });
         return providers;
     }
