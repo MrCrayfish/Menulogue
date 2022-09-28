@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "menulogue",
+  "version": "${version}",
+  "name": "Menulogue",
+  "description": "A wrapper mod that makes Mod Menu config entrypoint compatible with Catalogue",
+  "authors": [
+    "MrCrayfish"
+  ],
+  "contact": {
+    "homepage": "https://mrcrayfish.com/mods?id=menulogue",
+    "sources": "https://github.com/MrCrayfish/Menulogue",
+    "issues": "https://github.com/MrCrayfish/Menulogue/issues"
+  },
+  "license": "GPLv3",
+  "icon": "assets/menulogue/icon.png",
+  "environment": "client",
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric-api": "*",
+    "minecraft": "~1.19",
+    "java": ">=17",
+    "catalogue": "*"
+  },
+  "custom": {
+    "catalogue": {
+      "configFactory": "com.mrcrayfish.menulogue.integration.CatalogueConfigFactory"
+    }
+  }
+}
