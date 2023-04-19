@@ -18,9 +18,10 @@
   "depends": {
     "fabricloader": ">=0.14.9",
     "fabric-api": "*",
-    "minecraft": "~1.19.3",
+    "minecraft": "~1.19.4",
     "java": ">=17",
-    "catalogue": "*"
+    "catalogue": "*",
+    "modmenu": "*"
   },
   "custom": {
     "catalogue": {
