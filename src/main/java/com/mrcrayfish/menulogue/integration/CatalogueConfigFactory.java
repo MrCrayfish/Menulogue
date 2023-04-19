@@ -1,6 +1,7 @@
 package com.mrcrayfish.menulogue.integration;
 
 import com.mrcrayfish.menulogue.Menulogue;
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -24,12 +25,13 @@ public class CatalogueConfigFactory
             try
             {
                 ModMenuApi entry = container.getEntrypoint();
+                ConfigScreenFactory<?> factory = entry.getModConfigScreenFactory();
                 providers.put(modId, (previousScreen, modContainer) -> {
-                    return entry.getModConfigScreenFactory().create(previousScreen);
+                    return factory.create(previousScreen);
                 });
-                entry.getProvidedConfigScreenFactories().forEach((s, factory) -> {
+                entry.getProvidedConfigScreenFactories().forEach((s, f) -> {
                     providers.putIfAbsent(s, (previousScreen, modContainer) -> {
-                        return factory.create(previousScreen);
+                        return f.create(previousScreen);
                     });
                 });
             }
