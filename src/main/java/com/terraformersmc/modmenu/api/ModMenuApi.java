@@ -11,6 +11,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 public interface ModMenuApi {
 
@@ -28,5 +29,9 @@ public interface ModMenuApi {
 
     default Map<String, ConfigScreenFactory<?>> getProvidedConfigScreenFactories() {
         return ImmutableMap.of();
+    }
+
+    default void attachModpackBadges(Consumer<String> consumer) {
+        return;
     }
 }
