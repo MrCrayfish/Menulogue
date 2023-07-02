@@ -12,7 +12,7 @@
     "sources": "https://github.com/MrCrayfish/Menulogue",
     "issues": "https://github.com/MrCrayfish/Menulogue/issues"
   },
-  "license": "GPLv3",
+  "license": "MIT",
   "icon": "assets/menulogue/icon.png",
   "environment": "client",
   "depends": {
