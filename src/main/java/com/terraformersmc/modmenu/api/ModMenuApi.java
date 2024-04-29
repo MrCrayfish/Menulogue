@@ -27,8 +27,16 @@ public interface ModMenuApi {
         return screen -> null;
     }
 
+    default UpdateChecker getUpdateChecker() {
+        return null;
+    }
+
     default Map<String, ConfigScreenFactory<?>> getProvidedConfigScreenFactories() {
         return ImmutableMap.of();
+    }
+
+    default Map<String, UpdateChecker> getProvidedUpdateCheckers() {
+        return Map.of();
     }
 
     default void attachModpackBadges(Consumer<String> consumer) {
