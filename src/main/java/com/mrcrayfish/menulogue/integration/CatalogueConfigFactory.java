@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 /**
@@ -26,12 +27,16 @@ public class CatalogueConfigFactory
             {
                 ModMenuApi entry = container.getEntrypoint();
                 ConfigScreenFactory<?> factory = entry.getModConfigScreenFactory();
-                providers.put(modId, (previousScreen, modContainer) -> {
-                    return factory.create(previousScreen);
-                });
-                entry.getProvidedConfigScreenFactories().forEach((s, f) -> {
-                    providers.putIfAbsent(s, (previousScreen, modContainer) -> {
+                Optional.ofNullable(factory).ifPresent(f -> {
+                    providers.put(modId, (previousScreen, modContainer) -> {
                         return f.create(previousScreen);
+                    });
+                });
+                entry.getProvidedConfigScreenFactories().forEach((providedModId, providedFactory) -> {
+                    Optional.ofNullable(providedFactory).ifPresent(f -> {
+                        providers.putIfAbsent(providedModId, (previousScreen, modContainer) -> {
+                            return f.create(previousScreen);
+                        });
                     });
                 });
             }
