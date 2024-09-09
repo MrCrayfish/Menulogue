@@ -15,6 +15,7 @@ import java.util.function.BiFunction;
 /**
  * Author: MrCrayfish
  */
+@SuppressWarnings("unused")
 public class CatalogueConfigFactory
 {
     public static Map<String, BiFunction<Screen, ModContainer, Screen>> createConfigProvider()
