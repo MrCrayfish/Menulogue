@@ -32,7 +32,7 @@ public interface ModMenuApi {
     }
 
     default Map<String, ConfigScreenFactory<?>> getProvidedConfigScreenFactories() {
-        return ImmutableMap.of();
+        return Map.of();
     }
 
     default Map<String, UpdateChecker> getProvidedUpdateCheckers() {
