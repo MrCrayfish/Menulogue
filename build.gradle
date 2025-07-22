@@ -1,5 +1,7 @@
+import org.apache.commons.io.FilenameUtils
+
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 	id 'maven-publish'
 	id 'signing'
 }
@@ -88,7 +90,7 @@ publishing {
 					password = project.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
 				}
 			}
-		} else {
+		} else if(System.getenv("LOCAL_MAVEN")) {
 			maven {
 				url "file://" + System.getenv("LOCAL_MAVEN")
 			}
@@ -97,17 +99,32 @@ publishing {
 }
 
 signing {
-	if (System.getenv("SIGNING_KEY")) {
+	if (System.getenv("SIGNING_KEY") && System.getenv("SIGNING_PASSPHRASE")) {
 		def signingKey = System.getenv("SIGNING_KEY")
 		def signingPassword = System.getenv("SIGNING_PASSPHRASE")
 		useInMemoryPgpKeys(signingKey, signingPassword)
+		sign publishing.publications.mavenJava
 	}
-	sign publishing.publications.mavenJava
 }
 
-task incrementBuild {
+tasks.register("signJar") {
+	dependsOn remapJar
+	onlyIf {
+		findProperty('keyStore') || System.getenv("KEYSTORE")
+	}
 	doLast {
-		int version = file('/release_build').text.toInteger()
-		file('/release_build').text = version + 1
+		def unsignedJar = tasks.remapJar.archiveFile.get()
+		def name = FilenameUtils.removeExtension(unsignedJar.getAsFile().getName());
+		def signedJar  = layout.buildDirectory.file("libs/%s-signed.jar".formatted(name)).get();
+		def options = [:]
+		options['jar'] = unsignedJar.getAsFile().getAbsolutePath()
+		options['signedJar'] = signedJar.getAsFile().getAbsolutePath()
+		options['alias'] = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
+		options['keyStore'] = findProperty('keyStore') ?: System.getenv("KEYSTORE")
+		options['storePass'] = findProperty('keyStorePass') ?: System.getenv("KEYSTORE_PASS")
+		options['storetype'] = "jks"
+		this.getAnt().invokeMethod("signjar", options);
 	}
 }
+
+build.dependsOn signJar
