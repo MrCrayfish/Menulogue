@@ -19,6 +19,10 @@ base {
 version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
+configurations {
+    implementation.extendsFrom library
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
