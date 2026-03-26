@@ -1,3 +1,5 @@
+import org.apache.commons.io.FilenameUtils;
+
 buildscript {
     dependencies {
         classpath "commons-io:commons-io:2.20.0"
@@ -5,27 +7,22 @@ buildscript {
 }
 
 plugins {
-	id 'fabric-loom' version '1.13-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
 	id 'maven-publish'
 	id 'signing'
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
-
-archivesBaseName = "${project.mod_id}-fabric"
-version = "${project.minecraft_version}-${project.mod_version}"
-group = project.maven_group
-
-configurations {
-	implementation.extendsFrom library
+base {
+    archivesName = "${mod_id}-fabric"
 }
+
+version = "${project.mod_version}+${project.minecraft_version}"
+group = project.maven_group
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {
@@ -33,7 +30,8 @@ processResources {
 		"mod_id": mod_id,
 		"mod_name": mod_name,
 		"mod_version": mod_version,
-		"minecraft_version": minecraft_version
+		"minecraft_version": minecraft_version,
+        "java_version": java_version
 	]
 	filesMatching("fabric.mod.json") {
 		expand props
@@ -42,11 +40,13 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = 'UTF-8'
-	it.options.getRelease().set(21)
+    it.options.release = 25
 }
 
 java {
-	withSourcesJar()
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
@@ -62,13 +62,11 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			groupId project.group
-			artifactId project.archivesBaseName
+			artifactId base.archivesName.get()
 			version project.version
 
-			artifact remapJar
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+			artifact jar
+			artifact sourcesJar
 
 			pom.withXml {
 				def depsNode = asNode().appendNode('dependencies')
@@ -112,13 +110,13 @@ signing {
 }
 
 tasks.register("signJar") {
-    dependsOn remapJar
+    dependsOn jar
     onlyIf {
         findProperty('keyStore') || System.getenv("KEYSTORE")
     }
     doLast {
-        def unsignedJar = remapJar.archiveFile.get().asFile
-        def name = org.apache.commons.io.FilenameUtils.removeExtension(unsignedJar.getName())
+        def unsignedJar = jar.archiveFile.get().asFile
+        def name = FilenameUtils.removeExtension(unsignedJar.getName())
         def signedJar  = layout.buildDirectory.file("libs/%s-signed.jar".formatted(name)).get().asFile
         def signingKeyAlias = findProperty('keyStoreAlias') ?: System.getenv("KEYSTORE_ALIAS")
         def signingKeystore = findProperty('keyStore') ?: System.getenv("KEYSTORE")

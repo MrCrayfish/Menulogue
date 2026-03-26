@@ -4,8 +4,8 @@
  */
 package com.terraformersmc.modmenu.api;
 
-import com.google.common.collect.ImmutableMap;
 import com.mrcrayfish.menulogue.Menulogue;
+import com.terraformersmc.modmenu.util.NullScreenFactory;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@SuppressWarnings("unused")
 public interface ModMenuApi {
 
     static Screen createModsScreen(Screen previous) {
@@ -24,7 +25,7 @@ public interface ModMenuApi {
     }
 
     default ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return screen -> null;
+        return new NullScreenFactory<>();
     }
 
     default UpdateChecker getUpdateChecker() {

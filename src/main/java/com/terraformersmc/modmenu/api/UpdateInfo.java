@@ -7,6 +7,7 @@ package com.terraformersmc.modmenu.api;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("unused")
 public interface UpdateInfo {
 
     boolean isUpdateAvailable();

@@ -4,6 +4,9 @@
  */
 package com.terraformersmc.modmenu.api;
 
+import org.jetbrains.annotations.Nullable;
+
+@SuppressWarnings("unused")
 public interface UpdateChecker {
-    UpdateInfo checkForUpdates();
+   @Nullable UpdateInfo checkForUpdates();
 }

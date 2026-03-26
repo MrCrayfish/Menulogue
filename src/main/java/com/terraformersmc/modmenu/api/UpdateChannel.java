@@ -4,6 +4,7 @@
  */
 package com.terraformersmc.modmenu.api;
 
+@SuppressWarnings("unused")
 public enum UpdateChannel {
     ALPHA,
     BETA,

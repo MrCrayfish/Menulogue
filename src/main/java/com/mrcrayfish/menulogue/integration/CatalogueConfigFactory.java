@@ -3,6 +3,7 @@ package com.mrcrayfish.menulogue.integration;
 import com.mrcrayfish.menulogue.Menulogue;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import com.terraformersmc.modmenu.util.NullScreenFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.gui.screens.Screen;
@@ -28,11 +29,13 @@ public class CatalogueConfigFactory
             {
                 ModMenuApi entry = container.getEntrypoint();
                 ConfigScreenFactory<?> factory = entry.getModConfigScreenFactory();
-                Optional.ofNullable(factory).ifPresent(f -> {
-                    providers.put(modId, (previousScreen, modContainer) -> {
-                        return f.create(previousScreen);
+                if(!(factory instanceof NullScreenFactory<?>)) {
+                    Optional.ofNullable(factory).ifPresent(f -> {
+                        providers.put(modId, (previousScreen, modContainer) -> {
+                            return f.create(previousScreen);
+                        });
                     });
-                });
+                }
                 entry.getProvidedConfigScreenFactories().forEach((providedModId, providedFactory) -> {
                     Optional.ofNullable(providedFactory).ifPresent(f -> {
                         providers.putIfAbsent(providedModId, (previousScreen, modContainer) -> {
